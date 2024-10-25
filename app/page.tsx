@@ -126,25 +126,6 @@ export default function Page() {
     }
   };
 
-  const teeJobIdsPaginated = async (
-    teePoolContract: TeePoolImplementation,
-    teeAddress: string,
-    start: number,
-    end: number
-  ) => {
-    try {
-      const jobIds = await teePoolContract.teeJobIdsPaginated(
-        teeAddress as any,
-        start as any,
-        end as any
-      );
-      return jobIds.map(Number);
-    } catch (error) {
-      console.error("Error fetching paginated TEE job IDs:", error);
-      throw error;
-    }
-  };
-
   const handleError = (message: string) => {
     notifications.show({
       color: "red",
