@@ -334,8 +334,12 @@ export default function Page() {
               TWITTER_PASSWORD:
                 "79a076686d33878f1a11ef62218266e51e9b17eb3e2c1485ebc1cf3b775a5dd93dc585cddeea975e4f0082310dca5630b0ca68abeb82eb4c46f486b7a9e297f2113815c11ff6ec52d11fc0f08e8e0c625b76490dcbd07e2994e9a0781d26672cd7e96c117ebb511e82e55fae5af25e21f83f14d007135823199eede5cee11aad5080bd0ec63e3885f93278baaca44bb6804429854344edb083b980d7643c37d7e59b8dcad81814b7e127b88b32d166eec3e4150fb0b30d674232b5005439163462b7c1ab14d225f50b570f10f8b5953a2db3042899bae7215c4ee5ee9905d05feebe3b9b06577189ca06f3fc583d891e40dc732cbc82e5712b5396c57e56275c66ebc75c722495a4119cb41c79c8323bb6eccb9c30129c81d00e8b369fb01b32c78c238c7f0d917786c6fecb0749535387076da39a061b3b2b131e91685b983fedc2c0c52a77dd92f71955af5f762999223d44919e2380000cfe0ef05a0bc50cc4aae808b56eaa9a2eed2c71f3137cf7b47173a7f6172ab5f75012ee46e0109b",
             },
-            fixed_iv: fixed_iv.toString('hex'),
-            fixed_ephemeral_key: fixed_ephemeral_key.toString('hex'),
+            validate_permissions: {
+              address: contractAddress,
+              encryption_key: signature,
+              fixed_iv: fixed_iv.toString('hex'),
+              fixed_ephemeral_key: fixed_ephemeral_key.toString('hex'),
+            }
           }),
         }
       );
