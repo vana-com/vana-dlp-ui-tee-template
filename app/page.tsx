@@ -289,12 +289,50 @@ export default function Page() {
         jobDetails.teeUrl
       );
 
+      appendStatus(`Preparing contribution proof request for TEE`);
+
+      // Prepare the request body
+      const requestBody: any = {
+        job_id: latestJobId,
+        file_id: uploadedFileId,
+        nonce: "1234",
+        proof_url: "https://github.com/vana-com/vana-satya-proof-template/releases/download/v24/gsc-my-proof-24.tar.gz",
+        encryption_seed: FIXED_MESSAGE,
+        env_vars: {
+          USER_EMAIL: "user123@gmail.com",
+        },
+        secrets: {
+          OPENAI_API_KEY: "5995fd35703fe232de27b759abe4d7f1b6f8bd97b97edd7432e3198d680870433ef3c2a4f85835fce07f6b9dee3987d7061f562c87cc446aba578cacf26ede463867c98d8a6622056c038ad42665ed26c2c7f9c5f0fe9b71c038ae9b170ddb642a633d0c3e47aec32017ab298a313c629014374883fd4267b338ca5dbde2ff5734e90fc441d37a3d6983fde2a169b1a4b0cf3fefeeba0951d5d2d2f3047e781427e7ae78baacd30aeaa7dbf12c9834825ffa34a94ecac569a08586c50facd00e80e112555e8338312b044e6889b8096c8d7fff8179c5e4f0f54d8b01cbaa0d579f6bfc4edac14cb3955b8a8cf8041d8e6f3111925030e1c9ed814ecc41d468172967b4e15e87ac76cb93d987651c4b106e596af78cd9803410bad580cd2b0adc2c8982c6380cc25a79ce085f73c2194d181a403f8162909c2e871007f717f85979e6232aa6162f91b6f3f796c2f47b00607f12c75e51ed8ec34fe772b571f5cd5dbc2f36525af0d86b6627296a4ead12c3d4b34a8512a2737023f5186b8d0963",
+          TWITTER_PASSWORD: "79a076686d33878f1a11ef62218266e51e9b17eb3e2c1485ebc1cf3b775a5dd93dc585cddeea975e4f0082310dca5630b0ca68abeb82eb4c46f486b7a9e297f2113815c11ff6ec52d11fc0f08e8e0c625b76490dcbd07e2994e9a0781d26672cd7e96c117ebb511e82e55fae5af25e21f83f14d007135823199eede5cee11aad5080bd0ec63e3885f93278baaca44bb6804429854344edb083b980d7643c37d7e59b8dcad81814b7e127b88b32d166eec3e4150fb0b30d674232b5005439163462b7c1ab14d225f50b570f10f8b5953a2db3042899bae7215c4ee5ee9905d05feebe3b9b06577189ca06f3fc583d891e40dc732cbc82e5712b5396c57e56275c66ebc75c722495a4119cb41c79c8323bb6eccb9c30129c81d00e8b369fb01b32c78c238c7f0d917786c6fecb0749535387076da39a061b3b2b131e91685b983fedc2c0c52a77dd92f71955af5f762999223d44919e2380000cfe0ef05a0bc50cc4aae808b56eaa9a2eed2c71f3137cf7b47173a7f6172ab5f75012ee46e0109b",
+        },
+        validate_permissions: [
+          {
+            address: contractAddress,
+            pubKey: publicKey,
+            fixed_iv: fixed_iv.toString('hex'),
+            fixed_ephemeral_key: fixed_ephemeral_key.toString('hex'),
+          }
+        ]
+      };
+
+      // If TEE public key is available, encrypt the encryption key
+      if (jobDetails.teePublicKey) {
+        appendStatus(`Encrypting encryption key with TEE public key`);
+        try {
+          const encryptedKey = await encryptWithWalletPublicKey(signature, jobDetails.teePublicKey);
+          requestBody.encrypted_encryption_key = encryptedKey;
+          appendStatus(`Encryption key encrypted successfully`);
+        } catch (error) {
+          console.error("Error encrypting encryption key:", error);
+          appendStatus(`Warning: Failed to encrypt encryption key, falling back to direct encryption key`);
+          requestBody.encryption_key = signature;
+        }
+      } else {
+        appendStatus(`TEE public key not available, using direct encryption key`);
+        requestBody.encryption_key = signature;
+      }
+
       appendStatus(`Sending contribution proof request to TEE`);
-
-      // TODO: if the teePublicKey available, use it to encrypt the encryption_key before sending it to the TEE and send it as a separate field 'encrypted_encryption_key'
-      // To encrypt the encryption_key, use encryptWithPublicKey method with teePublicKey. Don't send the encryption_key as all, use the encrypted_encryption_key instead.
-      // If teePublicKey is not available, use the encryption_key as it is
-
       const contributionProofResponse = await fetch(
         `${jobDetails.teeUrl}/RunProof`,
         {
@@ -302,32 +340,15 @@ export default function Page() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            job_id: latestJobId,
-            file_id: uploadedFileId,
-            nonce: "1234",
-            encryption_key: signature,
-            proof_url:
-              "https://github.com/vana-com/vana-satya-proof-template/releases/download/v24/gsc-my-proof-24.tar.gz",
-            encryption_seed: "Please sign to retrieve your encryption key",
-            env_vars: {
-              USER_EMAIL: "user123@gmail.com",
-            },
-            secrets: {
-              OPENAI_API_KEY:
-                "5995fd35703fe232de27b759abe4d7f1b6f8bd97b97edd7432e3198d680870433ef3c2a4f85835fce07f6b9dee3987d7061f562c87cc446aba578cacf26ede463867c98d8a6622056c038ad42665ed26c2c7f9c5f0fe9b71c038ae9b170ddb642a633d0c3e47aec32017ab298a313c629014374883fd4267b338ca5dbde2ff5734e90fc441d37a3d6983fde2a169b1a4b0cf3fefeeba0951d5d2d2f3047e781427e7ae78baacd30aeaa7dbf12c9834825ffa34a94ecac569a08586c50facd00e80e112555e8338312b044e6889b8096c8d7fff8179c5e4f0f54d8b01cbaa0d579f6bfc4edac14cb3955b8a8cf8041d8e6f3111925030e1c9ed814ecc41d468172967b4e15e87ac76cb93d987651c4b106e596af78cd9803410bad580cd2b0adc2c8982c6380cc25a79ce085f73c2194d181a403f8162909c2e871007f717f85979e6232aa6162f91b6f3f796c2f47b00607f12c75e51ed8ec34fe772b571f5cd5dbc2f36525af0d86b6627296a4ead12c3d4b34a8512a2737023f5186b8d0963",
-              TWITTER_PASSWORD:
-                "79a076686d33878f1a11ef62218266e51e9b17eb3e2c1485ebc1cf3b775a5dd93dc585cddeea975e4f0082310dca5630b0ca68abeb82eb4c46f486b7a9e297f2113815c11ff6ec52d11fc0f08e8e0c625b76490dcbd07e2994e9a0781d26672cd7e96c117ebb511e82e55fae5af25e21f83f14d007135823199eede5cee11aad5080bd0ec63e3885f93278baaca44bb6804429854344edb083b980d7643c37d7e59b8dcad81814b7e127b88b32d166eec3e4150fb0b30d674232b5005439163462b7c1ab14d225f50b570f10f8b5953a2db3042899bae7215c4ee5ee9905d05feebe3b9b06577189ca06f3fc583d891e40dc732cbc82e5712b5396c57e56275c66ebc75c722495a4119cb41c79c8323bb6eccb9c30129c81d00e8b369fb01b32c78c238c7f0d917786c6fecb0749535387076da39a061b3b2b131e91685b983fedc2c0c52a77dd92f71955af5f762999223d44919e2380000cfe0ef05a0bc50cc4aae808b56eaa9a2eed2c71f3137cf7b47173a7f6172ab5f75012ee46e0109b",
-            },
-            validate_permissions: {
-              address: contractAddress,
-              encryption_key: signature,
-              fixed_iv: fixed_iv.toString('hex'),
-              fixed_ephemeral_key: fixed_ephemeral_key.toString('hex'),
-            }
-          }),
+          body: JSON.stringify(requestBody),
         }
       );
+
+      if (!contributionProofResponse.ok) {
+        const errorData = await contributionProofResponse.json();
+        throw new Error(`TEE request failed: ${JSON.stringify(errorData)}`);
+      }
+
       const contributionProofData = await contributionProofResponse.json();
       console.log("Contribution proof response:", contributionProofData);
       appendStatus(
@@ -341,10 +362,10 @@ export default function Page() {
       setUploadState("done");
       appendStatus("Reward received successfully");
     } catch (error) {
-      console.error("Error encrypting and uploading file:", error);
+      console.error("Error in file upload process:", error);
       setUploadState("initial");
-      appendStatus("Error: Failed to encrypt and upload file");
-      handleError("Failed to encrypt and upload file. Please try again.");
+      appendStatus(`Error: ${error.message}`);
+      handleError(error.message || "Failed to process file upload. Please try again.");
     }
   };
 
