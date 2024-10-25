@@ -101,7 +101,7 @@ export default function Page() {
       const job = await teePoolContract.jobs(jobId as any) as any;
       const teeInfo = await teePoolContract.tees(job.teeAddress);
 
-      return { ...job, teeUrl: teeInfo.url };
+      return { ...job, teeUrl: teeInfo.url, teePublicKey: teeInfo.publicKey };
     } catch (error) {
       console.error("Error fetching job details:", error);
       notifications.show({
