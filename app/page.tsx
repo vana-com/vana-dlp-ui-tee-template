@@ -361,7 +361,7 @@ export default function Page() {
 
       setUploadState("done");
       appendStatus("Reward received successfully");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error in file upload process:", error);
       setUploadState("initial");
       appendStatus(`Error: ${error.message}`);
