@@ -81,8 +81,8 @@ export default function Page() {
     setStatusLog(prevLog => [...prevLog, newStatus]);
   };
 
-  const encryptWithMasterKey = async (data: string, masterKey: string): Promise<string> => {
-    const publicKeyBytes = Buffer.from(masterKey.startsWith("0x") ? masterKey.slice(2) : masterKey, "hex");
+  const encryptWithWalletPublicKey = async (data: string, publicKey: string): Promise<string> => {
+    const publicKeyBytes = Buffer.from(publicKey.startsWith("0x") ? publicKey.slice(2) : publicKey, "hex");
     const uncompressedKey = publicKeyBytes.length === 64 ? Buffer.concat([Buffer.from([4]), publicKeyBytes]) : publicKeyBytes;
 
     const encryptedBuffer = await eccrypto.encrypt(uncompressedKey, Buffer.from(data), {
@@ -213,10 +213,10 @@ export default function Page() {
         signer
       ) as unknown as TeePoolImplementation;
 
-      const masterKey = await dlpContract.masterKey();
-      console.log("Master Key:", masterKey);
+      const publicKey = await dlpContract.masterKey();
+      console.log("DLP public Key:", publicKey);
 
-      const encryptedKey = await encryptWithMasterKey(signature, masterKey);
+      const encryptedKey = await encryptWithWalletPublicKey(signature, publicKey);
       console.log(`encryptedKey: '${encryptedKey}'`);
 
       appendStatus("Adding file to DataRegistry contract with permissions. Requesting user for permission...");
@@ -290,6 +290,10 @@ export default function Page() {
       );
 
       appendStatus(`Sending contribution proof request to TEE`);
+
+      // TODO: if the teePublicKey available, use it to encrypt the encryption_key before sending it to the TEE and send it as a separate field 'encrypted_encryption_key'
+      // To encrypt the encryption_key, use encryptWithPublicKey method with teePublicKey. Don't send the encryption_key as all, use the encrypted_encryption_key instead.
+      // If teePublicKey is not available, use the encryption_key as it is
 
       const contributionProofResponse = await fetch(
         `${jobDetails.teeUrl}/RunProof`,
