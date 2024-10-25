@@ -434,6 +434,11 @@
               "internalType": "uint256",
               "name": "jobsCount",
               "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "publicKey",
+              "type": "string"
             }
           ],
           "internalType": "struct ITeePool.TeeInfo",
@@ -524,6 +529,11 @@
         {
           "internalType": "string",
           "name": "url",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "publicKey",
           "type": "string"
         }
       ],
@@ -923,6 +933,11 @@
               "internalType": "uint256",
               "name": "jobsCount",
               "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "publicKey",
+              "type": "string"
             }
           ],
           "internalType": "struct ITeePool.TeeInfo",
@@ -974,6 +989,11 @@
               "internalType": "uint256",
               "name": "jobsCount",
               "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "publicKey",
+              "type": "string"
             }
           ],
           "internalType": "struct ITeePool.TeeInfo",
