@@ -308,7 +308,7 @@ export default function Page() {
         validate_permissions: [
           {
             address: contractAddress,
-            pubKey: publicKey,
+            public_key: publicKey,
             fixed_iv: fixed_iv.toString('hex'),
             fixed_ephemeral_key: fixed_ephemeral_key.toString('hex'),
           }
