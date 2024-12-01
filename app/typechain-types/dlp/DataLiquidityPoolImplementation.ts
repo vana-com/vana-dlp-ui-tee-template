@@ -56,32 +56,35 @@ export declare namespace IDataLiquidityPool {
 
 export declare namespace DataLiquidityPoolImplementation {
   export type InitParamsStruct = {
+    trustedForwarder: AddressLike;
     ownerAddress: AddressLike;
     tokenAddress: AddressLike;
     dataRegistryAddress: AddressLike;
     teePoolAddress: AddressLike;
     name: string;
-    masterKey: string;
+    publicKey: string;
     proofInstruction: string;
     fileRewardFactor: BigNumberish;
   };
 
   export type InitParamsStructOutput = [
+    trustedForwarder: string,
     ownerAddress: string,
     tokenAddress: string,
     dataRegistryAddress: string,
     teePoolAddress: string,
     name: string,
-    masterKey: string,
+    publicKey: string,
     proofInstruction: string,
     fileRewardFactor: bigint
   ] & {
+    trustedForwarder: string;
     ownerAddress: string;
     tokenAddress: string;
     dataRegistryAddress: string;
     teePoolAddress: string;
     name: string;
-    masterKey: string;
+    publicKey: string;
     proofInstruction: string;
     fileRewardFactor: bigint;
   };
@@ -90,8 +93,9 @@ export declare namespace DataLiquidityPoolImplementation {
 export interface DataLiquidityPoolImplementationInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "DEFAULT_ADMIN_ROLE"
+      | "MAINTAINER_ROLE"
       | "UPGRADE_INTERFACE_VERSION"
-      | "acceptOwnership"
       | "addRewardsForContributors"
       | "contributorFiles"
       | "contributorInfo"
@@ -102,27 +106,32 @@ export interface DataLiquidityPoolImplementationInterface extends Interface {
       | "files"
       | "filesListAt"
       | "filesListCount"
+      | "getRoleAdmin"
+      | "grantRole"
+      | "hasRole"
       | "initialize"
-      | "masterKey"
+      | "isTrustedForwarder"
       | "multicall"
       | "name"
-      | "owner"
       | "pause"
       | "paused"
-      | "pendingOwner"
       | "proofInstruction"
       | "proxiableUUID"
-      | "renounceOwnership"
+      | "publicKey"
+      | "renounceRole"
       | "requestReward"
+      | "revokeRole"
+      | "supportsInterface"
       | "teePool"
       | "token"
       | "totalContributorsRewardAmount"
-      | "transferOwnership"
+      | "trustedForwarder"
       | "unpause"
       | "updateFileRewardFactor"
-      | "updateMasterKey"
       | "updateProofInstruction"
+      | "updatePublicKey"
       | "updateTeePool"
+      | "updateTrustedForwarder"
       | "upgradeToAndCall"
       | "version"
   ): FunctionFragment;
@@ -133,22 +142,28 @@ export interface DataLiquidityPoolImplementationInterface extends Interface {
       | "FileRewardFactorUpdated"
       | "FileValidated"
       | "Initialized"
-      | "MasterKeyUpdated"
-      | "OwnershipTransferStarted"
-      | "OwnershipTransferred"
       | "Paused"
       | "ProofInstructionUpdated"
+      | "PublicKeyUpdated"
       | "RewardRequested"
+      | "RoleAdminChanged"
+      | "RoleGranted"
+      | "RoleRevoked"
+      | "TeePoolUpdated"
       | "Unpaused"
       | "Upgraded"
   ): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "UPGRADE_INTERFACE_VERSION",
+    functionFragment: "DEFAULT_ADMIN_ROLE",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "acceptOwnership",
+    functionFragment: "MAINTAINER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "UPGRADE_INTERFACE_VERSION",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -189,22 +204,32 @@ export interface DataLiquidityPoolImplementationInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "initialize",
     values: [DataLiquidityPoolImplementation.InitParamsStruct]
   ): string;
-  encodeFunctionData(functionFragment: "masterKey", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "isTrustedForwarder",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "multicall",
     values: [BytesLike[]]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "pendingOwner",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "proofInstruction",
     values?: undefined
@@ -213,13 +238,22 @@ export interface DataLiquidityPoolImplementationInterface extends Interface {
     functionFragment: "proxiableUUID",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "publicKey", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
+    functionFragment: "renounceRole",
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "requestReward",
     values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "teePool", values?: undefined): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
@@ -228,8 +262,8 @@ export interface DataLiquidityPoolImplementationInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "transferOwnership",
-    values: [AddressLike]
+    functionFragment: "trustedForwarder",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
@@ -237,15 +271,19 @@ export interface DataLiquidityPoolImplementationInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateMasterKey",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "updateProofInstruction",
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "updatePublicKey",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateTeePool",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateTrustedForwarder",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -255,11 +293,15 @@ export interface DataLiquidityPoolImplementationInterface extends Interface {
   encodeFunctionData(functionFragment: "version", values?: undefined): string;
 
   decodeFunctionResult(
-    functionFragment: "UPGRADE_INTERFACE_VERSION",
+    functionFragment: "DEFAULT_ADMIN_ROLE",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "acceptOwnership",
+    functionFragment: "MAINTAINER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "UPGRADE_INTERFACE_VERSION",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -299,17 +341,21 @@ export interface DataLiquidityPoolImplementationInterface extends Interface {
     functionFragment: "filesListCount",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "masterKey", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "pendingOwner",
+    functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isTrustedForwarder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "proofInstruction",
     data: BytesLike
@@ -318,12 +364,18 @@ export interface DataLiquidityPoolImplementationInterface extends Interface {
     functionFragment: "proxiableUUID",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "publicKey", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "renounceOwnership",
+    functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "requestReward",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "teePool", data: BytesLike): Result;
@@ -333,7 +385,7 @@ export interface DataLiquidityPoolImplementationInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "transferOwnership",
+    functionFragment: "trustedForwarder",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
@@ -342,15 +394,19 @@ export interface DataLiquidityPoolImplementationInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateMasterKey",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "updateProofInstruction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "updatePublicKey",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "updateTeePool",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateTrustedForwarder",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -408,44 +464,6 @@ export namespace InitializedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace MasterKeyUpdatedEvent {
-  export type InputTuple = [newMasterKey: string];
-  export type OutputTuple = [newMasterKey: string];
-  export interface OutputObject {
-    newMasterKey: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace OwnershipTransferStartedEvent {
-  export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
-  export type OutputTuple = [previousOwner: string, newOwner: string];
-  export interface OutputObject {
-    previousOwner: string;
-    newOwner: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace OwnershipTransferredEvent {
-  export type InputTuple = [previousOwner: AddressLike, newOwner: AddressLike];
-  export type OutputTuple = [previousOwner: string, newOwner: string];
-  export interface OutputObject {
-    previousOwner: string;
-    newOwner: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace PausedEvent {
   export type InputTuple = [account: AddressLike];
   export type OutputTuple = [account: string];
@@ -463,6 +481,18 @@ export namespace ProofInstructionUpdatedEvent {
   export type OutputTuple = [newProofInstruction: string];
   export interface OutputObject {
     newProofInstruction: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace PublicKeyUpdatedEvent {
+  export type InputTuple = [newPublicKey: string];
+  export type OutputTuple = [newPublicKey: string];
+  export interface OutputObject {
+    newPublicKey: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -488,6 +518,76 @@ export namespace RewardRequestedEvent {
     fileId: bigint;
     proofIndex: bigint;
     rewardAmount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RoleAdminChangedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    previousAdminRole: BytesLike,
+    newAdminRole: BytesLike
+  ];
+  export type OutputTuple = [
+    role: string,
+    previousAdminRole: string,
+    newAdminRole: string
+  ];
+  export interface OutputObject {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RoleGrantedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RoleRevokedEvent {
+  export type InputTuple = [
+    role: BytesLike,
+    account: AddressLike,
+    sender: AddressLike
+  ];
+  export type OutputTuple = [role: string, account: string, sender: string];
+  export interface OutputObject {
+    role: string;
+    account: string;
+    sender: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace TeePoolUpdatedEvent {
+  export type InputTuple = [newTeePool: AddressLike];
+  export type OutputTuple = [newTeePool: string];
+  export interface OutputObject {
+    newTeePool: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -562,9 +662,11 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  UPGRADE_INTERFACE_VERSION: TypedContractMethod<[], [string], "view">;
+  DEFAULT_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
 
-  acceptOwnership: TypedContractMethod<[], [void], "nonpayable">;
+  MAINTAINER_ROLE: TypedContractMethod<[], [string], "view">;
+
+  UPGRADE_INTERFACE_VERSION: TypedContractMethod<[], [string], "view">;
 
   addRewardsForContributors: TypedContractMethod<
     [contributorsRewardAmount: BigNumberish],
@@ -606,36 +708,68 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
 
   filesListCount: TypedContractMethod<[], [bigint], "view">;
 
+  getRoleAdmin: TypedContractMethod<[role: BytesLike], [string], "view">;
+
+  grantRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  hasRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
+
   initialize: TypedContractMethod<
     [params: DataLiquidityPoolImplementation.InitParamsStruct],
     [void],
     "nonpayable"
   >;
 
-  masterKey: TypedContractMethod<[], [string], "view">;
+  isTrustedForwarder: TypedContractMethod<
+    [forwarder: AddressLike],
+    [boolean],
+    "view"
+  >;
 
   multicall: TypedContractMethod<[data: BytesLike[]], [string[]], "nonpayable">;
 
   name: TypedContractMethod<[], [string], "view">;
 
-  owner: TypedContractMethod<[], [string], "view">;
-
   pause: TypedContractMethod<[], [void], "nonpayable">;
 
   paused: TypedContractMethod<[], [boolean], "view">;
-
-  pendingOwner: TypedContractMethod<[], [string], "view">;
 
   proofInstruction: TypedContractMethod<[], [string], "view">;
 
   proxiableUUID: TypedContractMethod<[], [string], "view">;
 
-  renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
+  publicKey: TypedContractMethod<[], [string], "view">;
+
+  renounceRole: TypedContractMethod<
+    [role: BytesLike, callerConfirmation: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
   requestReward: TypedContractMethod<
     [fileId: BigNumberish, proofIndex: BigNumberish],
     [void],
     "nonpayable"
+  >;
+
+  revokeRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  supportsInterface: TypedContractMethod<
+    [interfaceId: BytesLike],
+    [boolean],
+    "view"
   >;
 
   teePool: TypedContractMethod<[], [string], "view">;
@@ -644,22 +778,12 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
 
   totalContributorsRewardAmount: TypedContractMethod<[], [bigint], "view">;
 
-  transferOwnership: TypedContractMethod<
-    [newOwner: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+  trustedForwarder: TypedContractMethod<[], [string], "view">;
 
   unpause: TypedContractMethod<[], [void], "nonpayable">;
 
   updateFileRewardFactor: TypedContractMethod<
     [newFileRewardFactor: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
-  updateMasterKey: TypedContractMethod<
-    [newMasterKey: string],
     [void],
     "nonpayable"
   >;
@@ -670,8 +794,20 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
     "nonpayable"
   >;
 
+  updatePublicKey: TypedContractMethod<
+    [newPublicKey: string],
+    [void],
+    "nonpayable"
+  >;
+
   updateTeePool: TypedContractMethod<
     [newTeePool: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  updateTrustedForwarder: TypedContractMethod<
+    [trustedForwarderAddress: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -689,11 +825,14 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "UPGRADE_INTERFACE_VERSION"
+    nameOrSignature: "DEFAULT_ADMIN_ROLE"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "acceptOwnership"
-  ): TypedContractMethod<[], [void], "nonpayable">;
+    nameOrSignature: "MAINTAINER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "UPGRADE_INTERFACE_VERSION"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "addRewardsForContributors"
   ): TypedContractMethod<
@@ -745,6 +884,23 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
     nameOrSignature: "filesListCount"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "getRoleAdmin"
+  ): TypedContractMethod<[role: BytesLike], [string], "view">;
+  getFunction(
+    nameOrSignature: "grantRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "hasRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "initialize"
   ): TypedContractMethod<
     [params: DataLiquidityPoolImplementation.InitParamsStruct],
@@ -752,16 +908,13 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "masterKey"
-  ): TypedContractMethod<[], [string], "view">;
+    nameOrSignature: "isTrustedForwarder"
+  ): TypedContractMethod<[forwarder: AddressLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "multicall"
   ): TypedContractMethod<[data: BytesLike[]], [string[]], "nonpayable">;
   getFunction(
     nameOrSignature: "name"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "pause"
@@ -770,17 +923,21 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
     nameOrSignature: "paused"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
-    nameOrSignature: "pendingOwner"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
     nameOrSignature: "proofInstruction"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "proxiableUUID"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "renounceOwnership"
-  ): TypedContractMethod<[], [void], "nonpayable">;
+    nameOrSignature: "publicKey"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "renounceRole"
+  ): TypedContractMethod<
+    [role: BytesLike, callerConfirmation: AddressLike],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "requestReward"
   ): TypedContractMethod<
@@ -788,6 +945,16 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
     [void],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "revokeRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "supportsInterface"
+  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "teePool"
   ): TypedContractMethod<[], [string], "view">;
@@ -798,8 +965,8 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
     nameOrSignature: "totalContributorsRewardAmount"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "transferOwnership"
-  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+    nameOrSignature: "trustedForwarder"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "unpause"
   ): TypedContractMethod<[], [void], "nonpayable">;
@@ -811,14 +978,21 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "updateMasterKey"
-  ): TypedContractMethod<[newMasterKey: string], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "updateProofInstruction"
   ): TypedContractMethod<[newProofInstruction: string], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "updatePublicKey"
+  ): TypedContractMethod<[newPublicKey: string], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "updateTeePool"
   ): TypedContractMethod<[newTeePool: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updateTrustedForwarder"
+  ): TypedContractMethod<
+    [trustedForwarderAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "upgradeToAndCall"
   ): TypedContractMethod<
@@ -859,27 +1033,6 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
     InitializedEvent.OutputObject
   >;
   getEvent(
-    key: "MasterKeyUpdated"
-  ): TypedContractEvent<
-    MasterKeyUpdatedEvent.InputTuple,
-    MasterKeyUpdatedEvent.OutputTuple,
-    MasterKeyUpdatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "OwnershipTransferStarted"
-  ): TypedContractEvent<
-    OwnershipTransferStartedEvent.InputTuple,
-    OwnershipTransferStartedEvent.OutputTuple,
-    OwnershipTransferStartedEvent.OutputObject
-  >;
-  getEvent(
-    key: "OwnershipTransferred"
-  ): TypedContractEvent<
-    OwnershipTransferredEvent.InputTuple,
-    OwnershipTransferredEvent.OutputTuple,
-    OwnershipTransferredEvent.OutputObject
-  >;
-  getEvent(
     key: "Paused"
   ): TypedContractEvent<
     PausedEvent.InputTuple,
@@ -894,11 +1047,46 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
     ProofInstructionUpdatedEvent.OutputObject
   >;
   getEvent(
+    key: "PublicKeyUpdated"
+  ): TypedContractEvent<
+    PublicKeyUpdatedEvent.InputTuple,
+    PublicKeyUpdatedEvent.OutputTuple,
+    PublicKeyUpdatedEvent.OutputObject
+  >;
+  getEvent(
     key: "RewardRequested"
   ): TypedContractEvent<
     RewardRequestedEvent.InputTuple,
     RewardRequestedEvent.OutputTuple,
     RewardRequestedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleAdminChanged"
+  ): TypedContractEvent<
+    RoleAdminChangedEvent.InputTuple,
+    RoleAdminChangedEvent.OutputTuple,
+    RoleAdminChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleGranted"
+  ): TypedContractEvent<
+    RoleGrantedEvent.InputTuple,
+    RoleGrantedEvent.OutputTuple,
+    RoleGrantedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoleRevoked"
+  ): TypedContractEvent<
+    RoleRevokedEvent.InputTuple,
+    RoleRevokedEvent.OutputTuple,
+    RoleRevokedEvent.OutputObject
+  >;
+  getEvent(
+    key: "TeePoolUpdated"
+  ): TypedContractEvent<
+    TeePoolUpdatedEvent.InputTuple,
+    TeePoolUpdatedEvent.OutputTuple,
+    TeePoolUpdatedEvent.OutputObject
   >;
   getEvent(
     key: "Unpaused"
@@ -960,39 +1148,6 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
       InitializedEvent.OutputObject
     >;
 
-    "MasterKeyUpdated(string)": TypedContractEvent<
-      MasterKeyUpdatedEvent.InputTuple,
-      MasterKeyUpdatedEvent.OutputTuple,
-      MasterKeyUpdatedEvent.OutputObject
-    >;
-    MasterKeyUpdated: TypedContractEvent<
-      MasterKeyUpdatedEvent.InputTuple,
-      MasterKeyUpdatedEvent.OutputTuple,
-      MasterKeyUpdatedEvent.OutputObject
-    >;
-
-    "OwnershipTransferStarted(address,address)": TypedContractEvent<
-      OwnershipTransferStartedEvent.InputTuple,
-      OwnershipTransferStartedEvent.OutputTuple,
-      OwnershipTransferStartedEvent.OutputObject
-    >;
-    OwnershipTransferStarted: TypedContractEvent<
-      OwnershipTransferStartedEvent.InputTuple,
-      OwnershipTransferStartedEvent.OutputTuple,
-      OwnershipTransferStartedEvent.OutputObject
-    >;
-
-    "OwnershipTransferred(address,address)": TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-    OwnershipTransferred: TypedContractEvent<
-      OwnershipTransferredEvent.InputTuple,
-      OwnershipTransferredEvent.OutputTuple,
-      OwnershipTransferredEvent.OutputObject
-    >;
-
     "Paused(address)": TypedContractEvent<
       PausedEvent.InputTuple,
       PausedEvent.OutputTuple,
@@ -1015,6 +1170,17 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
       ProofInstructionUpdatedEvent.OutputObject
     >;
 
+    "PublicKeyUpdated(string)": TypedContractEvent<
+      PublicKeyUpdatedEvent.InputTuple,
+      PublicKeyUpdatedEvent.OutputTuple,
+      PublicKeyUpdatedEvent.OutputObject
+    >;
+    PublicKeyUpdated: TypedContractEvent<
+      PublicKeyUpdatedEvent.InputTuple,
+      PublicKeyUpdatedEvent.OutputTuple,
+      PublicKeyUpdatedEvent.OutputObject
+    >;
+
     "RewardRequested(address,uint256,uint256,uint256)": TypedContractEvent<
       RewardRequestedEvent.InputTuple,
       RewardRequestedEvent.OutputTuple,
@@ -1024,6 +1190,50 @@ export interface DataLiquidityPoolImplementation extends BaseContract {
       RewardRequestedEvent.InputTuple,
       RewardRequestedEvent.OutputTuple,
       RewardRequestedEvent.OutputObject
+    >;
+
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
+    >;
+    RoleAdminChanged: TypedContractEvent<
+      RoleAdminChangedEvent.InputTuple,
+      RoleAdminChangedEvent.OutputTuple,
+      RoleAdminChangedEvent.OutputObject
+    >;
+
+    "RoleGranted(bytes32,address,address)": TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
+    RoleGranted: TypedContractEvent<
+      RoleGrantedEvent.InputTuple,
+      RoleGrantedEvent.OutputTuple,
+      RoleGrantedEvent.OutputObject
+    >;
+
+    "RoleRevoked(bytes32,address,address)": TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
+    RoleRevoked: TypedContractEvent<
+      RoleRevokedEvent.InputTuple,
+      RoleRevokedEvent.OutputTuple,
+      RoleRevokedEvent.OutputObject
+    >;
+
+    "TeePoolUpdated(address)": TypedContractEvent<
+      TeePoolUpdatedEvent.InputTuple,
+      TeePoolUpdatedEvent.OutputTuple,
+      TeePoolUpdatedEvent.OutputObject
+    >;
+    TeePoolUpdated: TypedContractEvent<
+      TeePoolUpdatedEvent.InputTuple,
+      TeePoolUpdatedEvent.OutputTuple,
+      TeePoolUpdatedEvent.OutputObject
     >;
 
     "Unpaused(address)": TypedContractEvent<

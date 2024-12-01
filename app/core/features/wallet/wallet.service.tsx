@@ -63,16 +63,21 @@ export const requestNetworkSwitch = async ({
   currency: string;
   explorerUrl?: string;
 }) => {
+  if (!window.ethereum) return;
+
   const hexChainId = "0x" + Number(chainId).toString(16);
 
   try {
+    // First try to switch to the network
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
       params: [{ chainId: hexChainId }],
     });
   } catch (error: any) {
+    // If the error code indicates the chain hasn't been added yet
     if (error.code === 4902) {
       try {
+        // Add the network
         await window.ethereum.request({
           method: "wallet_addEthereumChain",
           params: [
@@ -89,10 +94,13 @@ export const requestNetworkSwitch = async ({
             },
           ],
         });
-      } catch (error) {
-        console.log("Error switching the network", error); // * TODO : Handle error
-        return { error };
+      } catch (addError) {
+        console.error("Error adding the network:", addError);
+        throw addError;
       }
+    } else {
+      console.error("Error switching network:", error);
+      throw error;
     }
   }
 };

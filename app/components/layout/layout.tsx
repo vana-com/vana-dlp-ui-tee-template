@@ -11,8 +11,6 @@ import {
   Container,
   Flex,
   Group,
-  Menu,
-  SelectProps,
   Stack,
   Text,
   Title,
@@ -32,11 +30,6 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const network = useNetworkStore((state) => state.network);
-  const setNetwork = useNetworkStore((state) => state.setNetwork);
-
-  useEffect(() => {
-    useNetworkStore.persist.rehydrate();
-  }, []);
 
   const [sidebarOpened, { toggle: toggleSidebar }] = useDisclosure();
   const walletAddress = useWalletStore((state) => state.walletAddress);
@@ -50,28 +43,6 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
       toggleSidebar();
     }
   }, [pathname]);
-
-  const renderSelectOption: SelectProps["renderOption"] = ({ option }) => {
-    if (option.value === "testnet") {
-      return option.label;
-    }
-
-    return (
-      <Group flex="1" gap="xs">
-        {option.label}
-        <Badge size="sm" variant="light" color="dark">
-          Coming Soon
-        </Badge>
-      </Group>
-    );
-  };
-
-  // if query string contains `internal`, show internal features
-  let showInternalFeatures = false;
-  if (typeof window !== "undefined") {
-    const urlParams = new URLSearchParams(window.location.search);
-    showInternalFeatures = urlParams.has("internal");
-  }
 
   return (
     <AppShell
@@ -101,45 +72,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
                       DataDAO
                     </Title>
                   </Link>
-                  <Menu shadow="md" width={250}>
-                    <Menu.Target>
-                      <UnstyledButton>
-                        <Badge color="red" variant="light" size="lg">
-                          {network as string}
-                        </Badge>
-                      </UnstyledButton>
-                    </Menu.Target>
-
-                    <Menu.Dropdown>
-                      <Menu.Label>Network</Menu.Label>
-                      <Menu.Item
-                        onClick={() => setNetwork("moksha")}
-                        leftSection={
-                          network === "moksha" && (
-                            <Icon icon="carbon:checkmark" />
-                          )
-                        }
-                      >
-                        Moksha Testnet
-                      </Menu.Item>
-                      <Menu.Item
-                        disabled
-                        onClick={() => setNetwork("mainnet")}
-                        leftSection={
-                          network === "mainnet" && (
-                            <Icon icon="carbon:checkmark" />
-                          )
-                        }
-                      >
-                        <Group flex="1" gap="xs">
-                          Vana Mainnet
-                          <Badge size="sm" variant="light" color="dark">
-                            Coming Soon
-                          </Badge>
-                        </Group>
-                      </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
+                  <Badge color="red" variant="light" size="lg">
+                    {network as string}
+                  </Badge>
                 </Flex>
 
                 <Group ml="lg" gap={0} visibleFrom="sm">

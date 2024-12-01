@@ -221,19 +221,6 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
-          "internalType": "string",
-          "name": "newMasterKey",
-          "type": "string"
-        }
-      ],
-      "name": "MasterKeyUpdated",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
           "indexed": true,
           "internalType": "address",
           "name": "previousOwner",
@@ -298,6 +285,19 @@
       "anonymous": false,
       "inputs": [
         {
+          "indexed": false,
+          "internalType": "string",
+          "name": "newPublicKey",
+          "type": "string"
+        }
+      ],
+      "name": "PublicKeyUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
           "indexed": true,
           "internalType": "address",
           "name": "contributorAddress",
@@ -323,6 +323,19 @@
         }
       ],
       "name": "RewardRequested",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newTeePool",
+          "type": "address"
+        }
+      ],
+      "name": "TeePoolUpdated",
       "type": "event"
     },
     {
@@ -635,7 +648,7 @@
             },
             {
               "internalType": "string",
-              "name": "masterKey",
+              "name": "publicKey",
               "type": "string"
             },
             {
@@ -657,19 +670,6 @@
       "name": "initialize",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "masterKey",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -778,6 +778,19 @@
     },
     {
       "inputs": [],
+      "name": "publicKey",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "renounceOwnership",
       "outputs": [],
       "stateMutability": "nonpayable",
@@ -877,11 +890,11 @@
       "inputs": [
         {
           "internalType": "string",
-          "name": "newMasterKey",
+          "name": "newProofInstruction",
           "type": "string"
         }
       ],
-      "name": "updateMasterKey",
+      "name": "updateProofInstruction",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -890,11 +903,11 @@
       "inputs": [
         {
           "internalType": "string",
-          "name": "newProofInstruction",
+          "name": "newPublicKey",
           "type": "string"
         }
       ],
-      "name": "updateProofInstruction",
+      "name": "updatePublicKey",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
